@@ -20,7 +20,7 @@ class Login {
     async Authenticate(callback) {
       const query = `SELECT ID,Password,Firstname,Lastname,Designation,PermissionLevel FROM users where Username="${this.username}" and Deleted=0`;
       con.query(query,async (err, result, fields)=>{
-        if (err) throw err;
+        if (err) callback(err);
         if(result.length) {
           let returnCall;
           if(bcrypt.compareSync(this.password, result[0].Password)) {

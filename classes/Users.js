@@ -34,7 +34,7 @@ class Users {
     Search(callback) {
       // let result;
       con.query(`SELECT ID,Username,Firstname,Lastname,Designation,PermissionLevel,CreatedBy,UpdatedBy,CreatedDate,UpdatedDate FROM users where Deleted="0" `,(err, result, fields) => {
-        if (err) throw err;
+        if (err) callback(err);
         return callback(result);
       });
     }
@@ -42,7 +42,7 @@ class Users {
     SearchOne(ID,callback) {
       // let result;
       con.query(`SELECT ID,Username,Firstname,Lastname,Designation,PermissionLevel,CreatedBy,UpdatedBy,CreatedDate,UpdatedDate FROM users where Deleted="0" and ID="${ID}"`,(err, result, fields) => {
-        if (err) throw err;
+        if (err) callback(err);
         return callback(result);
       });
     }
@@ -68,7 +68,7 @@ class Users {
       let query = `UPDATE users SET ${updates} UpdatedBy="${commitby}", UpdatedDate=NOW() WHERE ID=${ID} and Deleted!=1`
       console.log(query);
       con.query(query,(err, result, fields) => {
-        if (err) throw err;
+        if (err) callback(err);
         return callback(result);
       });
     }
@@ -87,7 +87,7 @@ class Users {
     Delete(ID,callback) {
       let query = `UPDATE users SET Deleted = 1 WHERE ID=${ID} and Deleted!=1`
       con.query(query,(err, result, fields) => {
-        if (err) throw err;
+        if (err) callback(err);
         return callback(result);
       });
     }

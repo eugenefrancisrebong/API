@@ -50,7 +50,7 @@ app.post('/login',(req,res) => {
         password=req.body.password;
         new Login(username,password).Authenticate(function(data){res.send(data)})
     } catch (e) {
-        return 'incomplete parameters'
+        res.send(e)
     }
 })
 
@@ -64,7 +64,7 @@ app.get('/users/',async (req,res)=>{
             res.send(data);
         })
     } catch(e) {
-
+        res.send(e)
     }
 })
 
@@ -75,7 +75,7 @@ app.get('/users/:ID',(req,res)=>{
             res.send(data)
         })
     } catch(e) {
-
+        res.send(e)
     }
 })
 
@@ -84,7 +84,7 @@ app.delete('/users/:ID',(req,res)=>{
         const users = new Users();
         users.Delete(req.params.ID,function(data){res.send(data)})
     } catch(e) {
-
+        res.send(e)
     }
 })
 
@@ -93,7 +93,7 @@ app.post('/users/register',(req,res)=>{
         const {username,password,firstname,lastname,designation,permissionlevel,commitby} = req.body;
         new Users().Register(username,password,firstname,lastname,designation,permissionlevel,commitby,function(data){res.send(data)})
     } catch(e) {
-
+        res.send(e)
     }
 })
 
@@ -105,7 +105,7 @@ app.post('/users/update/:ID',(req,res)=>{
             res.send(data)
         })
     } catch(e) {
-
+        res.send(e)
     }
 })
 
@@ -117,6 +117,6 @@ app.post('/users/update/password/:ID',(req,res)=>{
             res.send(data);
         })
     } catch(e) {
-
+        res.send(e)
     }
 })
