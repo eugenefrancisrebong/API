@@ -4,6 +4,7 @@
   "description": "rest api for handling backend operations",
   "main": "index.js",
   "scripts": {
+    "start":"nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Eugene Francis Rebong <eugene261997@gmail.com>",

@@ -17,7 +17,7 @@ class Users {
     constructor() {
     }
 
-    Register(username,password,firstname,lastname,designation,permissionlevel,commitby) {
+    Register(username,password,firstname,lastname,designation,permissionlevel,commitby,callback) {
       bcrypt.hash(password, 10, async (err, hash) => {
         password =  hash;
         const query = `INSERT INTO users 
@@ -25,8 +25,8 @@ class Users {
         values
         ("${username}","${password}","${firstname}","${lastname}","${designation}","${permissionlevel}","${commitby}","${commitby}","NOW()","NOW()")`;
         con.query(query, function (err, result, fields) {
-          if (err) throw err;
-          return result;
+          if (err) callback({error:true,err});
+          callback(result);
         });
       });
     }
@@ -48,13 +48,10 @@ class Users {
     }
 
     Update(ID,payload,callback) {
-      const {username,password,firstname,lastname,designation,permissionlevel,commitby} = payload;
+      const {username,firstname,lastname,designation,permissionlevel,commitby} = payload;
       let updates = '';
       if(username) {
         updates+=`Username="${username}",`
-      }
-      if(password) {
-        updates+=`Password="${password}",`
       }
       if(firstname) {
         updates+=`FirstName="${firstname}",`
@@ -73,6 +70,17 @@ class Users {
       con.query(query,(err, result, fields) => {
         if (err) throw err;
         return callback(result);
+      });
+    }
+
+    ChangePassword(ID,password,commitby,callback) {
+      bcrypt.hash(password, 10, async (err, hash) => {
+        password =  hash;
+        let query = `UPDATE users SET Password="${password}", UpdatedBy="${commitby}", UpdatedDate=NOW() WHERE ID=${ID} and Deleted!=1`
+        con.query(query, function (err, result, fields) {
+          if (err) callback({error:true,err:err});
+          callback(result);
+        });
       });
     }
 

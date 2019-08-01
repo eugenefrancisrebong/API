@@ -18,10 +18,21 @@ class Login {
     }
 
     async Authenticate(callback) {
-      const query = `SELECT * FROM users where Username="${this.username}" and Deleted=0`;
+      const query = `SELECT ID,Password,Firstname,Lastname,Designation,PermissionLevel FROM users where Username="${this.username}" and Deleted=0`;
       con.query(query,async (err, result, fields)=>{
         if (err) throw err;
-        callback(bcrypt.compareSync(this.password, result[0].Password))
+        if(result.length) {
+          let returnCall;
+          if(bcrypt.compareSync(this.password, result[0].Password)) {
+            result[0].Password='';
+            returnCall=result[0];
+          } else {
+            returnCall=false;
+          }
+          callback(returnCall)
+        } else {
+          callback(false)
+        }
       });
       return 'connection failed';
     }

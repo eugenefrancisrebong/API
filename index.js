@@ -2,10 +2,23 @@ const dotenv = require('dotenv');
 const express = require('express');
 const Login = require('./classes/Login')
 const Users = require('./classes/Users')
+var bodyParser = require('body-parser');
 
 dotenv.config();
 const app = express();
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+next();
+});
+
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json())
+// app.use(express.urlencoded({ extended: true }));
+// app.use(express.json());
 
 app.get('/', (req, res) => {
     return res.send('Received a GET HTTP method');
@@ -33,8 +46,8 @@ app.listen(process.env.PORT, () =>
 app.post('/login',(req,res) => {
     let username,password;
     try {
-        username=req.headers.username;
-        password=req.headers.password;
+        username=req.body.username;
+        password=req.body.password;
         new Login(username,password).Authenticate(function(data){res.send(data)})
     } catch (e) {
         return 'incomplete parameters'
@@ -77,8 +90,8 @@ app.delete('/users/:ID',(req,res)=>{
 
 app.post('/users/register',(req,res)=>{
     try {
-        const {username,password,firstname,lastname,designation,permissionlevel,commitby} = req.headers;
-        new Users().Register(username,password,firstname,lastname,designation,permissionlevel,commitby)
+        const {username,password,firstname,lastname,designation,permissionlevel,commitby} = req.body;
+        new Users().Register(username,password,firstname,lastname,designation,permissionlevel,commitby,function(data){res.send(data)})
     } catch(e) {
 
     }
@@ -86,10 +99,22 @@ app.post('/users/register',(req,res)=>{
 
 app.post('/users/update/:ID',(req,res)=>{
     try {
-        const {username,password,firstname,lastname,designation,permissionlevel,commitby} = req.headers;
+        const {username,firstname,lastname,designation,permissionlevel,commitby} = req.body;
         const ID = req.params.ID
-        new Users().Update(ID,{username,password,firstname,lastname,designation,permissionlevel,commitby},function(data){
+        new Users().Update(ID,{username,firstname,lastname,designation,permissionlevel,commitby},function(data){
             res.send(data)
+        })
+    } catch(e) {
+
+    }
+})
+
+app.post('/users/update/password/:ID',(req,res)=>{
+    try{
+        const {password,commitby} = req.body;
+        const ID = req.params.ID;
+        new Users().ChangePassword(ID,password,commitby,(data)=>{
+            res.send(data);
         })
     } catch(e) {
 
