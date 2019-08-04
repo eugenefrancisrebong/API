@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 const express = require('express');
 const Login = require('./classes/Login')
 const Users = require('./classes/Users')
+const Templates = require('./classes/Templates')
 var bodyParser = require('body-parser');
 
 dotenv.config();
@@ -114,6 +115,46 @@ app.post('/users/update/password/:ID',(req,res)=>{
         const {password,commitby} = req.body;
         const ID = req.params.ID;
         new Users().ChangePassword(ID,password,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+//templates
+
+app.post('/templates/create/',(req,res)=>{
+    try{
+        const {title,content,commitby} = req.body;
+        new Templates().Save(title,content,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.get('/templates/search/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        if (!ID) {
+        }
+        new Templates().Search(ID,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.post('/templates/update/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        const {content,commitby} = req.body;
+        if (!ID) {
+        }
+        new Templates().Update(ID,content,commitby,(data)=>{
             res.send(data);
         })
     } catch(e) {
