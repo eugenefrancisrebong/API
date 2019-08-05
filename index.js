@@ -2,7 +2,11 @@ const dotenv = require('dotenv');
 const express = require('express');
 const Login = require('./classes/Login')
 const Users = require('./classes/Users')
-var bodyParser = require('body-parser');
+const Templates = require('./classes/Templates')
+const Messages = require('./classes/Messages')
+const bodyParser = require('body-parser');
+const formidable = require('formidable');
+const fs = require('fs')
 
 dotenv.config();
 const app = express();
@@ -116,6 +120,61 @@ app.post('/users/update/password/:ID',(req,res)=>{
         new Users().ChangePassword(ID,password,commitby,(data)=>{
             res.send(data);
         })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+//templates
+
+app.post('/templates/create/',(req,res)=>{
+    try{
+        const {title,content,commitby} = req.body;
+        new Templates().Save(title,content,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.get('/templates/search/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        if (!ID) {
+        }
+        new Templates().Search(ID,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.post('/templates/update/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        const {content,commitby} = req.body;
+        if (!ID) {
+        }
+        new Templates().Update(ID,content,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.post('/messages/save/',(req,res)=>{
+    try{
+        var form = new formidable.IncomingForm();
+        form.parse(req, function(err, fields, files) {
+        console.log(fields,files)
+        fileContent = fs.readFileSync(files.csvfile.path, {encoding: 'utf8'});
+        new Messages().Create(escape(fields.title),escape(fields.content),fileContent,fields.commitby,(data)=>{
+            res.send(data)
+        });
+        });
     } catch(e) {
         res.send(e)
     }
