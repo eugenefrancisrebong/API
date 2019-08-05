@@ -19,7 +19,7 @@ class Templates {
 
     Save (title,content,commitby,callback) {
       const query = `INSERT INTO Templates (Title,Content,CreatedBy,UpdatedBy,CreatedDate,UpdatedDate)
-      VALUES ("${title}","${content}","${commitby}","${commitby}",NOW(),NOW())`;
+      VALUES ("${escape(title)}","${escape(content)}","${commitby}","${commitby}",NOW(),NOW())`;
       con.query(query,(err, result, fields)=>{
         if (err) {
           callback(err);
@@ -45,7 +45,7 @@ class Templates {
     }
 
     Update (ID,content,commitby,callback) {
-      const query = `UPDATE Templates SET Content="${content}", UpdatedBy="${commitby}",UpdatedDate=NOW() where ID="${ID}" and Deleted=0`;
+      const query = `UPDATE Templates SET Content="${escape(content)}", UpdatedBy="${commitby}",UpdatedDate=NOW() where ID="${ID}" and Deleted=0`;
       console.log(query);
       con.query(query,(err, result, fields)=>{
         console.log(err,result)

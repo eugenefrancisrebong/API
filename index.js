@@ -3,7 +3,10 @@ const express = require('express');
 const Login = require('./classes/Login')
 const Users = require('./classes/Users')
 const Templates = require('./classes/Templates')
-var bodyParser = require('body-parser');
+const Messages = require('./classes/Messages')
+const bodyParser = require('body-parser');
+const formidable = require('formidable');
+const fs = require('fs')
 
 dotenv.config();
 const app = express();
@@ -157,6 +160,21 @@ app.post('/templates/update/:ID?',(req,res)=>{
         new Templates().Update(ID,content,commitby,(data)=>{
             res.send(data);
         })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.post('/messages/save/',(req,res)=>{
+    try{
+        var form = new formidable.IncomingForm();
+        form.parse(req, function(err, fields, files) {
+        console.log(fields,files)
+        fileContent = fs.readFileSync(files.csvfile.path, {encoding: 'utf8'});
+        new Messages().Create(escape(fields.title),escape(fields.content),fileContent,fields.commitby,(data)=>{
+            res.send(data)
+        });
+        });
     } catch(e) {
         res.send(e)
     }
