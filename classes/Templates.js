@@ -56,6 +56,18 @@ class Templates {
         }
       });
     }
+
+    Delete (ID,commitby,callback) {
+      
+      const query = `UPDATE Templates SET Deleted=1,UpdatedBy="${commitby}" where ID="${ID}" and Deleted=0`;
+      con.query(query,(err, result, fields)=>{
+        if (err) {
+          callback(err);
+        } else {
+          callback(result);
+        }
+      });
+    }
 }
 
 

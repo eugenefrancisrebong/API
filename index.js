@@ -165,16 +165,64 @@ app.post('/templates/update/:ID?',(req,res)=>{
     }
 })
 
+app.post('/templates/delete/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        const {commitby} = req.body;
+        if (!ID) {
+        }
+        new Templates().Delete(ID,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+//messages
+
 app.post('/messages/save/',(req,res)=>{
     try{
         var form = new formidable.IncomingForm();
         form.parse(req, function(err, fields, files) {
-        console.log(fields,files)
-        fileContent = fs.readFileSync(files.csvfile.path, {encoding: 'utf8'});
-        new Messages().Create(escape(fields.title),escape(fields.content),fileContent,fields.commitby,(data)=>{
-            res.send(data)
+            fileContent = fs.readFileSync(files.csvfile.path, {encoding: 'utf8'});
+            new Messages().Create(fields.title,fields.content,fileContent,fields.commitby,(data)=>{
+                res.send(data)
+            });
         });
-        });
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.get('/messages/groups/',(req,res)=>{
+    try{
+        new Messages().GetItems((data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.get('/messages/get/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        new Messages().Select(ID,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.get('/messages/delete/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        console.log(ID);
+        new Messages().Delete(ID,(data)=>{
+            res.send(data);
+        })
     } catch(e) {
         res.send(e)
     }
