@@ -129,8 +129,8 @@ app.post('/users/update/password/:ID',(req,res)=>{
 
 app.post('/templates/create/',(req,res)=>{
     try{
-        const {title,content,commitby} = req.body;
-        new Templates().Save(title,content,commitby,(data)=>{
+        const {title,content,groupid,commitby} = req.body;
+        new Templates().Save(title,content,groupid,commitby,(data)=>{
             res.send(data);
         })
     } catch(e) {
@@ -178,6 +178,54 @@ app.post('/templates/delete/:ID?',(req,res)=>{
         res.send(e)
     }
 })
+
+app.post('/templates/groups/create',(req,res)=>{
+    try{
+        const {title,commitby} = req.body;
+        new Templates().CreateGroup(title,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.get('/templates/groups/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        new Templates().GetGroup(ID,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.post('/templates/groups/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        const {title,commitby} = req.body;
+        new Templates().UpdateGroup(ID,title,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.delete('/templates/groups/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        const {commitby} = req.body;
+        new Templates().DeleteGroup(ID,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+
 
 //messages
 
