@@ -27,6 +27,39 @@ class Messages {
             }
           });
     }
+
+    GetItems(callback) {
+      const query = `select ID, Title from Messages where DELETED = 0`
+      con.query(query,(err,result,fields)=>{
+        if(err){
+          callback(err)
+        } else {
+          callback(result)
+        }
+      })
+    }
+
+    Select(ID,callback) {
+      const query = `select Content,Data,SentData from Messages where ID=${ID} AND DELETED = 0`
+      con.query(query,(err,result,fields)=>{
+        if(err){
+          callback(err)
+        } else {
+          callback(result)
+        }
+      })
+    }
+
+    Delete(ID,callback) {
+      const query = `UPDATE Messages set Deleted=1 where ID=${ID} AND DELETED = 0`
+      con.query(query,(err,result,fields)=>{
+        if(err){
+          callback(err)
+        } else {
+          callback(result)
+        }
+      })
+    }
 }
 
 
