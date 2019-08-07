@@ -18,8 +18,9 @@ class Messages {
     }
 
     Create(title,content,csv,commitby,callback) {
-        const query = `INSERT INTO Messages (Title,Content,Data,SentData,CreatedBy,UpdatedBy,CreatedDate,UpdatedDate) VALUES ("${escape(title)}","${escape(content)}","${escape(csv)}","${escape('[]')}","${commitby}","${commitby}",NOW(),NOW())`;
+        const query = `call InsertMessages("${escape(title)}","${escape(content)}","${escape(csv)}","${escape('[]')}","${commitby}")`;
         con.query(query,(err, result, fields)=>{
+          console.log(result)
             if (err) {
                 callback(err)
             } else {
@@ -59,6 +60,51 @@ class Messages {
           callback(result)
         }
       })
+    }
+
+    CreateGroup(Title,commitby,callback) {
+      const query = `call InsertMessageGroup("${Title}",${commitby})`;
+      con.query(query,(err, result, fields)=>{
+        if (err) {
+          callback(err);
+        } else {
+          callback(result);
+        }
+      });
+    }
+
+    GetGroup(ID=null,callback) {
+      const query = `SELECT * FROM messagegroups WHERE ${ID?`ID=${ID} AND`:``} Deleted=0`
+      console.log(query)
+      con.query(query,(err, result, fields)=>{
+        if (err) {
+          callback(err);
+        } else {
+          callback(result);
+        }
+      });
+    }
+
+    UpdateGroup(ID,Title,commitby,callback) {
+      const query = `UPDATE MessageGroups SET Title="${Title}", UpdatedBy="${commitby}", UpdatedDate=NOW() WHERE ID=${ID} AND Deleted=0`
+      con.query(query,(err, result, fields)=>{
+        if (err) {
+          callback(err);
+        } else {
+          callback(result);
+        }
+      });
+    }
+
+    DeleteGroup(ID,commitby,callback) {
+      const query = `UPDATE MessageGroups SET Deleted="1", UpdatedBy="${commitby}", UpdatedDate=NOW() WHERE ID=${ID} AND Deleted=0`
+      con.query(query,(err, result, fields)=>{
+        if (err) {
+          callback(err);
+        } else {
+          callback(result);
+        }
+      });
     }
 }
 

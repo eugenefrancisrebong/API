@@ -243,16 +243,6 @@ app.post('/messages/save/',(req,res)=>{
     }
 })
 
-app.get('/messages/groups/',(req,res)=>{
-    try{
-        new Messages().GetItems((data)=>{
-            res.send(data);
-        })
-    } catch(e) {
-        res.send(e)
-    }
-})
-
 app.get('/messages/get/:ID?',(req,res)=>{
     try{
         const ID = req.params.ID;
@@ -269,6 +259,55 @@ app.get('/messages/delete/:ID?',(req,res)=>{
         const ID = req.params.ID;
         console.log(ID);
         new Messages().Delete(ID,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.post('/messages/groups/create',(req,res)=>{
+    try{
+        const {title,commitby} = req.body;
+        new Messages().CreateGroup(title,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+
+
+app.get('/messages/groups/:ID?',(req,res)=>{
+    console.log('eut')
+    try{
+        const ID = req.params.ID;
+        new Messages().GetGroup(ID,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.post('/messages/groups/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        const {title,commitby} = req.body;
+        new Messages().UpdateGroup(ID,title,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.delete('/messages/groups/:ID?',(req,res)=>{
+    try{
+        const ID = req.params.ID;
+        const {commitby} = req.body;
+        new Messages().DeleteGroup(ID,commitby,(data)=>{
             res.send(data);
         })
     } catch(e) {
