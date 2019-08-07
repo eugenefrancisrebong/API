@@ -246,6 +246,7 @@ app.post('/messages/save/',(req,res)=>{
 app.get('/messages/get/:ID?',(req,res)=>{
     try{
         const ID = req.params.ID;
+        console.log(ID);
         new Messages().Select(ID,(data)=>{
             res.send(data);
         })
