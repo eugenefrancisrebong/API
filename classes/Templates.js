@@ -45,9 +45,7 @@ class Templates {
 
     Update (ID,content,commitby,callback) {
       const query = `UPDATE Templates SET Content="${escape(content)}", UpdatedBy=${commitby},UpdatedDate=NOW() where ID="${ID}" and Deleted=0`;
-      console.log(query);
       con.query(query,(err, result, fields)=>{
-        console.log(err,result)
         if (err) {
           callback(err);
         } else {
@@ -69,7 +67,6 @@ class Templates {
     }
 
     CreateGroup(Title,commitby,callback) {
-      console.log(72,Title,commitby)
       const query = `call InsertTemplateGroup("${Title}",${commitby})`;
       con.query(query,(err, result, fields)=>{
         if (err) {
