@@ -17,9 +17,8 @@ class Templates {
       this.password = password;
     }
 
-    Save (title,content,commitby,callback) {
-      const query = `INSERT INTO Templates (Title,Content,CreatedBy,UpdatedBy,CreatedDate,UpdatedDate)
-      VALUES ("${escape(title)}","${escape(content)}","${commitby}","${commitby}",NOW(),NOW())`;
+    Save (title,content,groupid,commitby,callback) {
+      const query = `call InsertTemplate("${escape(title)}","${escape(content)}",${groupid},"${commitby}");`;
       con.query(query,(err, result, fields)=>{
         if (err) {
           callback(err);
@@ -45,7 +44,7 @@ class Templates {
     }
 
     Update (ID,content,commitby,callback) {
-      const query = `UPDATE Templates SET Content="${escape(content)}", UpdatedBy="${commitby}",UpdatedDate=NOW() where ID="${ID}" and Deleted=0`;
+      const query = `UPDATE Templates SET Content="${escape(content)}", UpdatedBy=${commitby},UpdatedDate=NOW() where ID="${ID}" and Deleted=0`;
       console.log(query);
       con.query(query,(err, result, fields)=>{
         console.log(err,result)
@@ -60,6 +59,51 @@ class Templates {
     Delete (ID,commitby,callback) {
       
       const query = `UPDATE Templates SET Deleted=1,UpdatedBy="${commitby}" where ID="${ID}" and Deleted=0`;
+      con.query(query,(err, result, fields)=>{
+        if (err) {
+          callback(err);
+        } else {
+          callback(result);
+        }
+      });
+    }
+
+    CreateGroup(Title,commitby,callback) {
+      console.log(72,Title,commitby)
+      const query = `call InsertTemplateGroup("${Title}",${commitby})`;
+      con.query(query,(err, result, fields)=>{
+        if (err) {
+          callback(err);
+        } else {
+          callback(result);
+        }
+      });
+    }
+
+    GetGroup(ID=null,callback) {
+      const query = `SELECT * FROM TemplateGroups WHERE ${ID?`ID=${ID} AND`:``} Deleted=0`
+      con.query(query,(err, result, fields)=>{
+        if (err) {
+          callback(err);
+        } else {
+          callback(result);
+        }
+      });
+    }
+
+    UpdateGroup(ID,Title,commitby,callback) {
+      const query = `UPDATE TemplateGroups SET Title="${Title}", UpdatedBy="${commitby}", UpdatedDate=NOW() WHERE ID=${ID} AND Deleted=0`
+      con.query(query,(err, result, fields)=>{
+        if (err) {
+          callback(err);
+        } else {
+          callback(result);
+        }
+      });
+    }
+
+    DeleteGroup(ID,commitby,callback) {
+      const query = `UPDATE TemplateGroups SET Deleted="1", UpdatedBy="${commitby}", UpdatedDate=NOW() WHERE ID=${ID} AND Deleted=0`
       con.query(query,(err, result, fields)=>{
         if (err) {
           callback(err);
