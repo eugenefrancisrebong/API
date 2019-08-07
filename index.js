@@ -131,7 +131,7 @@ app.post('/templates/create/',(req,res)=>{
     try{
         const {title,content,groupid,commitby} = req.body;
         new Templates().Save(title,content,groupid,commitby,(data)=>{
-            res.send(data);
+            res.send( data.length>1 ? data[0] : data);
         })
     } catch(e) {
         res.send(e)

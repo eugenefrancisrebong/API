@@ -18,8 +18,7 @@ class Templates {
     }
 
     Save (title,content,groupid,commitby,callback) {
-      const query = `INSERT INTO Templates (Title,Content,GroupID,CreatedBy,UpdatedBy,CreatedDate,UpdatedDate)
-      VALUES ("${escape(title)}","${escape(content)}",${groupid},"${commitby}","${commitby}",NOW(),NOW())`;
+      const query = `call InsertTemplate("${escape(title)}","${escape(content)}",${groupid},"${commitby}");`;
       con.query(query,(err, result, fields)=>{
         if (err) {
           callback(err);
@@ -45,7 +44,7 @@ class Templates {
     }
 
     Update (ID,content,commitby,callback) {
-      const query = `UPDATE Templates SET Content="${escape(content)}", UpdatedBy="${commitby}",UpdatedDate=NOW() where ID="${ID}" and Deleted=0`;
+      const query = `UPDATE Templates SET Content="${escape(content)}", UpdatedBy=${commitby},UpdatedDate=NOW() where ID="${ID}" and Deleted=0`;
       console.log(query);
       con.query(query,(err, result, fields)=>{
         console.log(err,result)
@@ -70,8 +69,8 @@ class Templates {
     }
 
     CreateGroup(Title,commitby,callback) {
-      console.log(Title,commitby)
-      const query = `INSERT INTO TemplateGroups (Title,CreatedBy,UpdatedBy,CreatedDate,UpdatedDate,Deleted) VALUES ("${Title}",${commitby},${commitby},NOW(),NOW(),0)`;
+      console.log(72,Title,commitby)
+      const query = `call InsertTemplateGroup("${Title}",${commitby})`;
       con.query(query,(err, result, fields)=>{
         if (err) {
           callback(err);
