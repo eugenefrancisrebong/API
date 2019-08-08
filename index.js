@@ -243,9 +243,24 @@ app.post('/messages/save/',(req,res)=>{
     }
 })
 
+
+app.post('/messages/sentstatus/:ID?',(req,res)=>{
+    console.log('wow')
+    try{
+        const ID = req.params.ID;
+        const {SentData,commitby} = req.body;
+        new Messages().UpdateSent(ID,SentData,commitby,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
 app.get('/messages/get/:ID?',(req,res)=>{
     try{
         const ID = req.params.ID;
+        console.log(ID);
         new Messages().Select(ID,(data)=>{
             res.send(data);
         })

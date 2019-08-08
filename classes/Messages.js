@@ -41,7 +41,18 @@ class Messages {
     }
 
     Select(ID,callback) {
-      const query = `select Content,Data,SentData from Messages where ID=${ID} AND DELETED = 0`
+      const query = `select ID,GroupID,Title,Content,Data,SentData from Messages where ${ID ? ` ID=${ID} AND` : ''} DELETED = 0`
+      con.query(query,(err,result,fields)=>{
+        if(err){
+          callback(err)
+        } else {
+          callback(result)
+        }
+      })
+    }
+
+    UpdateSent(ID,SentData,commitby,callback) {
+      const query = `UPDATE Messages set SentData="${SentData}",UpdatedBy=${commitby},UpdatedDate=NOW() where ID=${ID} AND DELETED = 0`
       con.query(query,(err,result,fields)=>{
         if(err){
           callback(err)
