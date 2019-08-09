@@ -6,7 +6,7 @@ dotenv.config();
 
 
 const saltRounds = 10;
-const con = mysql.createConnection({
+const con = mysql.createPool({ connectionLimit: 5,
   host: process.env.HOST,
   user: process.env.USER,
   password: process.env.PASSWORD,
