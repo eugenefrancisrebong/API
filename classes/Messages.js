@@ -17,8 +17,8 @@ class Messages {
       this.password = password;
     }
 
-    Create(title,content,csv,commitby,callback) {
-        const query = `call InsertMessages("${escape(title)}","${escape(content)}","${escape(csv)}","${escape('[]')}","${commitby}")`;
+    Create(title,content,csv,groupID,commitby,callback) {
+        const query = `call InsertMessages("${escape(title)}","${escape(content)}","${escape(csv)}","${escape('[]')}",${groupID},"${commitby}")`;
         con.query(query,(err, result, fields)=>{
           console.log(result)
             if (err) {

@@ -94,8 +94,8 @@ app.delete('/users/:ID',(req,res)=>{
 
 app.post('/users/register',(req,res)=>{
     try {
-        const {username,password,firstname,lastname,designation,permissionlevel,commitby} = req.body;
-        new Users().Register(username,password,firstname,lastname,designation,permissionlevel,commitby,function(data){res.send(data)})
+        const {username,password,email,firstname,lastname,designation,PermissionLevel,commitby} = req.body;
+        new Users().Register(username,password,email,firstname,lastname,designation,PermissionLevel,commitby,function(data){res.send(data)})
     } catch(e) {
         res.send(e)
     }
@@ -103,9 +103,10 @@ app.post('/users/register',(req,res)=>{
 
 app.post('/users/update/:ID',(req,res)=>{
     try {
-        const {username,firstname,lastname,designation,permissionlevel,commitby} = req.body;
+        const {username,email,firstname,lastname,designation,PermissionLevel,commitby} = req.body;
+        console.log(req.body)
         const ID = req.params.ID
-        new Users().Update(ID,{username,firstname,lastname,designation,permissionlevel,commitby},function(data){
+        new Users().Update(ID,{username,email,firstname,lastname,designation,PermissionLevel,commitby},function(data){
             res.send(data)
         })
     } catch(e) {
@@ -121,6 +122,39 @@ app.post('/users/update/password/:ID',(req,res)=>{
             res.send(data);
         })
     } catch(e) {
+        res.send(e)
+    }
+})
+
+app.post('/users/forgot-password/',(req,res)=>{
+    try{
+        const {email} = req.body;
+        new Users().ForgotPassword(email,(data)=>{
+            res.send(data);
+        })
+    } catch(e) {
+        res.send(e)
+    }
+})
+
+app.post('/users/forgot-password/verify',(req,res)=>{
+    try {
+        const {email,key} = req.body;
+        new Users().VerifyKey(email,key,(data)=>{
+            res.send(data);
+        })
+    } catch (e) {
+        res.send(e)
+    }
+})
+
+app.post('/users/reset-password/',(req,res)=>{
+    try {
+        const {email,key,password} = req.body;
+        new Users().ResetPassword(email,key,password,(data)=>{
+            res.send(data);
+        })
+    } catch (e) {
         res.send(e)
     }
 })
@@ -234,7 +268,7 @@ app.post('/messages/save/',(req,res)=>{
         var form = new formidable.IncomingForm();
         form.parse(req, function(err, fields, files) {
             fileContent = fs.readFileSync(files.csvfile.path, {encoding: 'utf8'});
-            new Messages().Create(fields.title,fields.content,fileContent,fields.commitby,(data)=>{
+            new Messages().Create(fields.title,fields.content,fileContent,fields.groupID,fields.commitby,(data)=>{
                 res.send(data)
             });
         });
