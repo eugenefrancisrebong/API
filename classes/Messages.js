@@ -6,7 +6,7 @@ dotenv.config();
 
 const con = mysql.createPool({ connectionLimit: 5,
   host: process.env.HOST,
-  user: process.env.USER,
+  user: process.env.DB_USER,
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
 });
@@ -85,7 +85,7 @@ class Messages {
     }
 
     GetGroup(ID=null,callback) {
-      const query = `SELECT * FROM messagegroups WHERE ${ID?`ID=${ID} AND`:``} Deleted=0`
+      const query = `SELECT * FROM MessageGroups WHERE ${ID?`ID=${ID} AND`:``} Deleted=0`
       console.log(query)
       con.query(query,(err, result, fields)=>{
         if (err) {
