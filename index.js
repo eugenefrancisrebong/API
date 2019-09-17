@@ -12,15 +12,15 @@ var cors = require('cors')
 dotenv.config();
 const app = express();
 
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/chain.pem', 'utf8');
+// const privateKey = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/privkey.pem', 'utf8');
+// const certificate = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/cert.pem', 'utf8');
+// const ca = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/chain.pem', 'utf8');
 
-const credentials = {
-	key: privateKey,
-	cert: certificate,
-	ca: ca
-};
+// const credentials = {
+// 	key: privateKey,
+// 	cert: certificate,
+// 	ca: ca
+// };
 
 
 app.use(cors({origin:true}))
@@ -66,19 +66,19 @@ app.delete('/', (req, res) => {
     return res.send('Received a DELETE HTTP method');
 });
 
-const httpServer = http.createServer(app);
-const httpsServer = https.createServer(credentials, app);
+// const httpServer = http.createServer(app);
+// const httpsServer = https.createServer(credentials, app);
 
-httpServer.listen(80, () => {
-	console.log('HTTP Server running on port 80');
-});
+// httpServer.listen(80, () => {
+// 	console.log('HTTP Server running on port 80');
+// });
 
-httpsServer.listen(443, () => {
-	console.log('HTTPS Server running on port 443');
-});
-// app.listen(process.env.PORT, () =>
-//     console.log(`Example app listening on port ${process.env.PORT}!`),
-// );
+// httpsServer.listen(443, () => {
+// 	console.log('HTTPS Server running on port 443');
+// });
+app.listen(process.env.PORT, () =>
+    console.log(`Example app listening on port ${process.env.PORT}!`),
+);
 
 
 //LOGIN
