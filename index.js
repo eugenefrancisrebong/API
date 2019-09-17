@@ -7,13 +7,27 @@ const Messages = require('./classes/Messages')
 const bodyParser = require('body-parser');
 const formidable = require('formidable');
 const fs = require('fs')
+var cors = require('cors')
 
 dotenv.config();
 const app = express();
 
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/chain.pem', 'utf8');
+
+const credentials = {
+	key: privateKey,
+	cert: certificate,
+	ca: ca
+};
+
+
+app.use(cors({origin:true}))
 app.use(function(req, res, next) {
+    res.header("x-Trigger", "CORS");
     res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 next();
 });
@@ -23,6 +37,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 // app.use(express.urlencoded({ extended: true }));
 // app.use(express.json());
+
+app.all('*', function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+
+    if (req.method == 'OPTIONS') {
+        res.send(200);
+    } else {
+        next();
+    }
+});
 
 app.get('/', (req, res) => {
     return res.send('Received a GET HTTP method');
@@ -40,9 +66,19 @@ app.delete('/', (req, res) => {
     return res.send('Received a DELETE HTTP method');
 });
 
-app.listen(process.env.PORT, () =>
-    console.log(`Example app listening on port ${process.env.PORT}!`),
-);
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(80, () => {
+	console.log('HTTP Server running on port 80');
+});
+
+httpsServer.listen(443, () => {
+	console.log('HTTPS Server running on port 443');
+});
+// app.listen(process.env.PORT, () =>
+//     console.log(`Example app listening on port ${process.env.PORT}!`),
+// );
 
 
 //LOGIN
