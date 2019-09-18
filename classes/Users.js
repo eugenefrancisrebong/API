@@ -134,24 +134,75 @@ class Users {
                 console.log({err})
                 callback({success:false})
               } else {
-                const mailgun = require("mailgun-js");
-                const DOMAIN = process.env.MAILGUN_DOMAIN;
-                const mg = mailgun({apiKey:  process.env.MAILGUN_KEY, domain: DOMAIN});
-                const data = {
-                  from: 'personal-message-generator <me@samples.mailgun.org>',
-                  to: email,
-                  subject: 'Reset Password',
-                  text: `The code for Resetting your password is: ${randpass}`
+                //Mail it to the recipient
+
+                var AWS = require('aws-sdk');
+                AWS.config.update({
+                    accessKeyId: process.env.AWS_ACCESSKEYID,
+                    secretAccessKey: process.env.AWS_SECRETACCESSKEY,
+                    region: process.env.AWS_REGION
+                  });
+                AWS.config.update({region: process.env.AWS_REGION});
+
+                const tempMessage = `The code for Resetting your password is: ${randpass}`;
+
+                const Message = {html:tempMessage,text:tempMessage};
+
+                var params = {
+                  Destination: {
+                    ToAddresses: [email]
+                  },
+                  Message: { 
+                    Body: { 
+                      Html: {
+                      Charset: "UTF-8",
+                      Data: Message.html
+                      },
+                      Text: {
+                      Charset: "UTF-8",
+                      Data: Message.text
+                      }
+                    },
+                    Subject: {
+                      Charset: 'UTF-8',
+                      Data: 'Reset Password'
+                    }
+                    },
+                  Source: process.env.AWS_RESETNOTIF_SOURCE, /* required */
+                    
                 };
-                mg.messages().send(data, function (error, body) {
-                  console.log(body);
-                  if(error) {
-                    console.log({err})
-                    callback({success:false})
-                  } else {
-                    callback({success:true})
-                  }
-                });
+
+                // Create the promise and SES service object
+                var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+                // Handle promise's fulfilled/rejected states
+                sendPromise.then(
+                  function(data) {
+                    callback({success:true,data})
+                  }).catch(
+                    function(err) {
+                      callback({success:false,err})
+                  });
+
+
+                // const mailgun = require("mailgun-js");
+                // const DOMAIN = process.env.MAILGUN_DOMAIN;
+                // const mg = mailgun({apiKey:  process.env.MAILGUN_KEY, domain: DOMAIN});
+                // const data = {
+                //   from: 'personal-message-generator <me@samples.mailgun.org>',
+                //   to: email,
+                //   subject: 'Reset Password',
+                //   text: `The code for Resetting your password is: ${randpass}`
+                // };
+                // mg.messages().send(data, function (error, body) {
+                //   console.log(body);
+                //   if(error) {
+                //     console.log({err})
+                //     callback({success:false})
+                //   } else {
+                //     callback({success:true})
+                //   }
+                // });
               }
             })
           } else {

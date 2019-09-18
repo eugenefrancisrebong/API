@@ -10,6 +10,7 @@
   "author": "Eugene Francis Rebong <eugene261997@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.530.0",
     "bcrypt": "^3.0.6",
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
