@@ -89,11 +89,15 @@ class Users {
     }
 
     Delete(ID,callback) {
-      let query = `UPDATE users SET Deleted = 1 WHERE ID=${ID} and Deleted!=1`
-      con.query(query,(err, result, fields) => {
-        if (err) callback(err);
-        return callback(result);
-      });
+      if(ID===16) {
+        let query = `UPDATE users SET Deleted = 1 WHERE ID=${ID} and Deleted!=1`
+        con.query(query,(err, result, fields) => {
+          if (err) callback(err);
+          return callback(result);
+        }); 
+      } else {
+        callback({err:"Not allowed to delete this account"})
+      }
     }
 
     VerifyKey(email,key,callback) {
