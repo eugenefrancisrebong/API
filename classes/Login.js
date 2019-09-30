@@ -1,10 +1,11 @@
-const dotenv = require('dotenv');
-const mysql = require('mysql');
-const bcrypt = require('bcrypt');
+const dotenv = require("dotenv");
+const mysql = require("mysql");
+const bcrypt = require("bcrypt");
 
 dotenv.config();
 
-const con = mysql.createPool({ connectionLimit: 5,
+const con = mysql.createPool({
+  connectionLimit: 5,
   host: process.env.HOST,
   user: process.env.DB_USER,
   password: process.env.PASSWORD,
@@ -12,35 +13,33 @@ const con = mysql.createPool({ connectionLimit: 5,
 });
 
 class Login {
-    constructor(username,password) {
-      this.username = username;
-      this.password = password;
-    }
+  constructor(username, password) {
+    this.username = username;
+    this.password = password;
+  }
 
-    async Authenticate(callback) {
-      const query = `SELECT ID,Password,Firstname,Lastname,Designation,PermissionLevel FROM users where Username="${this.username}" and Deleted=0`;
-      con.query(query,async (err, result, fields)=>{
-        if (err) {
-          callback(err)
-        } else {
-          if(result.length) {
-            let returnCall;
-            if(bcrypt.compareSync(this.password, result[0].Password)) {
-              result[0].Password='';
-              returnCall=result[0];
-            } else {
-              returnCall=false;
-            }
-            callback(returnCall)
+  async Authenticate(callback) {
+    const query = `SELECT ID,Password,Firstname,Lastname,Designation,PermissionLevel FROM users where Username="${this.username}" and Deleted=0`;
+    con.query(query, async (err, result, fields) => {
+      if (err) {
+        callback(err);
+      } else {
+        if (result.length) {
+          let returnCall;
+          if (bcrypt.compareSync(this.password, result[0].Password)) {
+            result[0].Password = "";
+            returnCall = result[0];
           } else {
-            callback(false)
+            returnCall = false;
           }
+          callback(returnCall);
+        } else {
+          callback(false);
         }
-      });
-      return 'connection failed';
-    }
-
+      }
+    });
+    return "connection failed";
+  }
 }
-
 
 module.exports = Login;
